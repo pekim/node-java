@@ -13,10 +13,12 @@ import java.nio.charset.Charset;
  * 
  */
 public final class Netstring {
-    private static final int MAXIMUM_LENGTH_BYTES = 16;
     private static final char LENGTH_DELIMITER = ':';
     private static final char STRING_DELIMITER = ',';
 
+    /**
+     * Character set for used for encoding and decoding netstrings.
+     */
     public static final Charset CHARSET = Charset.forName("UTF-8");
 
     private Netstring() {

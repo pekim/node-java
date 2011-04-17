@@ -5,16 +5,17 @@ var util = require('util'),
     Java;
 
 Java = function () {
-  var self = this,
-      nodeServer = new NodeServer(),
-      javaServer = new JavaServer();
+  var self = this;
+  
+  self.nodeServer = new NodeServer(),
+  self.javaServer = new JavaServer();
 
   events.EventEmitter.call(self);
   
-  javaServer.start({nodePort: nodeServer.port()});
+  self.javaServer.start({nodePort: self.nodeServer.port()});
 
-  nodeServer.on('initialised', function onMessage(message) {
-    javaServer.port = message.port;
+  self.nodeServer.on('initialised', function onMessage(message) {
+    self.javaServer.port(message.port);
     self.initialised = true;
 
     self.emit('initialised');
@@ -32,6 +33,7 @@ Java.prototype.onInitialised = function(callback) {
 };
 
 Java.prototype.sendRequest = function(request, callback) {
+  this.javaServer.sendRequest(request, callback);
 };
 
 module.exports = Java;

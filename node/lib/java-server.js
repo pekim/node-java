@@ -1,5 +1,7 @@
 var spawn = require('child_process').spawn,
     util = require('util'),
+    net = require('net'),
+    netstring = require('netstring'),
     events = require('events'),
 
     jar = __dirname + '/../../target/node-java-0.0.1-SNAPSHOT-jar-with-dependencies.jar',
@@ -20,8 +22,20 @@ Server.prototype.start = function (nodeConfiguration) {
   logEvents(this.javaProcess);
 };
 
+Server.prototype.port = function (port) {
+  this.port = port;
+};
+
 Server.prototype.kill = function () {
   this.javaProcess.kill();
+};
+
+Server.prototype.sendRequest = function(request, callback) {
+  var socket = net.createConnection(this.port);
+
+  socket.on('connect', function connect() {
+    socket.write(netstring.nsWrite(JSON.stringify(request)));
+  });
 };
 
 function logOutput(javaProcess) {

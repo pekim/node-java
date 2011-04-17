@@ -23,7 +23,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.co.pekim.nodejava.channelhandler.JsonHandler;
-import uk.co.pekim.nodejava.channelhandler.NetstringHandler;
+import uk.co.pekim.nodejava.channelhandler.NetstringDecoder;
+import uk.co.pekim.nodejava.channelhandler.NetstringEncoder;
 
 /**
  * 
@@ -55,7 +56,7 @@ public class Server {
 
         bootstrap.setPipelineFactory(new ChannelPipelineFactory() {
             public ChannelPipeline getPipeline() {
-                return Channels.pipeline(new NetstringHandler(), new JsonHandler());
+                return Channels.pipeline(new NetstringEncoder(), new NetstringDecoder(), new JsonHandler());
             }
         });
 
