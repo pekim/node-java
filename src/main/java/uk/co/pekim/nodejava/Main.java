@@ -6,6 +6,9 @@ package uk.co.pekim.nodejava;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import uk.co.pekim.nodejava.nodenotify.NodeNotifier;
+import uk.co.pekim.nodejava.nodenotify.NotifyInitialised;
+
 /**
  * 
  * 
@@ -28,9 +31,13 @@ public final class Main {
             if (args.length < 1) {
                 throw new NodeJavaException("Expected 1 argument, a JSON string");
             }
-            String json = args[0];
+            String configurationJson = args[0];
+            Configuration configuration = Configuration.parseJson(configurationJson);
 
-            new Server(json);
+            Server server = new Server();
+
+            NotifyInitialised initialisedMessage = new NotifyInitialised(server.getPort());
+            new NodeNotifier(configuration.getNodePort(), initialisedMessage);
         } catch (NodeJavaException exception) {
             LOGGER.error("Fatal error", exception);
             System.exit(1);

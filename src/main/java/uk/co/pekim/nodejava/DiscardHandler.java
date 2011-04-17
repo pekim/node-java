@@ -20,7 +20,7 @@ public class DiscardHandler extends SimpleChannelHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(DiscardHandler.class);
 
     @Override
-    public void messageReceived(ChannelHandlerContext context, MessageEvent event) {
+    public void messageReceived(final ChannelHandlerContext context, final MessageEvent event) {
         LOGGER.info(event.getMessage().toString());
 
         Channel channel = event.getChannel();
@@ -28,7 +28,7 @@ public class DiscardHandler extends SimpleChannelHandler {
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext context, ExceptionEvent event) {
+    public void exceptionCaught(final ChannelHandlerContext context, final ExceptionEvent event) {
         event.getCause().printStackTrace();
 
         Channel ch = event.getChannel();

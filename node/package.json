@@ -1,0 +1,21 @@
+{
+  "name": "java",
+  "description": "A Node/Java bridge.",
+  "version": "0.0.1",
+  "repository": {
+    "url": ""
+  },
+  "author": "Mike D Pilsbury <mike.pilsbury@gmail.com>",
+  "main": "lib/java",
+  "directories": {
+  },
+  "engines": {
+    "node": "*"
+  },
+  "dependencies" : {
+    "netstring" : ""
+  },
+  "devDependencies" : {
+    "nodeunit" : ""
+  }
+}

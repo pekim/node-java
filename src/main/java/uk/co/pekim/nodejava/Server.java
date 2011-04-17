@@ -39,10 +39,8 @@ public class Server {
     private int port;
 
     /**
-     * @param json
-     *            Configuration
      */
-    public Server(final String json) {
+    public Server() {
         InternalLoggerFactory.setDefaultFactory(new Slf4JLoggerFactory());
 
         LOGGER.info("Starting");
@@ -98,6 +96,13 @@ public class Server {
                 port++;
             }
         }
+        return port;
+    }
+
+    /**
+     * @return the port
+     */
+    public int getPort() {
         return port;
     }
 }
