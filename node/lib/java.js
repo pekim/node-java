@@ -1,15 +1,17 @@
 var util = require('util'),
     events = require('events'),
-    nodeServer = require('./node-server'),
-    javaServer = require('./java-server'),
+    NodeServer = require('./node-server'),
+    JavaServer = require('./java-server'),
     Java;
 
 Java = function () {
-  var self = this;
+  var self = this,
+      nodeServer = new NodeServer(),
+      javaServer = new JavaServer();
 
   events.EventEmitter.call(self);
   
-  javaServer.start({port: nodeServer.port()});
+  javaServer.start({nodePort: nodeServer.port()});
 
   nodeServer.on('initialised', function onMessage(message) {
     javaServer.port = message.port;
