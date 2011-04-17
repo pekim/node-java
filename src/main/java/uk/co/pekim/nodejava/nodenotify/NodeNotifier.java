@@ -34,12 +34,12 @@ public class NodeNotifier {
     /**
      * Create a Node notifier.
      * 
-     * @param port
+     * @param nodePort
      *            the port that a Node instance is listening on.
      * @param firstMessage
      *            a message to send to node.
      */
-    public NodeNotifier(final int port, final NotifyMessage firstMessage) {
+    public NodeNotifier(final int nodePort, final NotifyMessage firstMessage) {
         ChannelFactory factory = new NioClientSocketChannelFactory(Executors.newCachedThreadPool(),
                 Executors.newCachedThreadPool());
 
@@ -54,12 +54,12 @@ public class NodeNotifier {
         bootstrap.setOption("tcpNoDelay", true);
         bootstrap.setOption("keepAlive", true);
 
-        ChannelFuture future = bootstrap.connect(new InetSocketAddress(port));
+        ChannelFuture future = bootstrap.connect(new InetSocketAddress(nodePort));
         future.addListener(new ChannelFutureListener() {
             @Override
             public void operationComplete(final ChannelFuture future) throws Exception {
                 channel = future.getChannel();
-                LOGGER.info("Notifer initialised");
+                LOGGER.info("Notifier initialised");
 
                 send(firstMessage);
             }

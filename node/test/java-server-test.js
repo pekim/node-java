@@ -7,7 +7,6 @@ exports.start = function(test) {
 
   nodeServer = net.createServer(function connected(socket) {
     socket.on('data', function data(data) {
-      console.log('recv : ' + data.toString('utf8'));
       test.notStrictEqual(data.toString('utf8').indexOf('initialised'), -1);
       
       server.kill();

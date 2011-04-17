@@ -25,7 +25,7 @@ public class NetstringHandler extends SimpleChannelHandler {
     public void writeRequested(final ChannelHandlerContext context, final MessageEvent event) throws Exception {
         final String jsonString = (String) event.getMessage();
         final String netstring = Netstring.build(jsonString);
-        LOGGER.info("Writing " + netstring);
+        LOGGER.debug("Writing " + netstring);
 
         final byte[] netstringBytes = netstring.getBytes(Netstring.CHARSET);
         ChannelBuffer buffer = buffer(netstringBytes.length);

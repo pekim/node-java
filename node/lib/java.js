@@ -1,16 +1,15 @@
 var util = require('util'),
     events = require('events'),
-//    nodeServer = require('./node-server'),
+    nodeServer = require('./node-server'),
     javaServer = require('./java-server'),
-    Java,
-    java;
+    Java;
 
 Java = function () {
   var self = this;
 
   events.EventEmitter.call(self);
   
-  javaServer.start({port: 1234/*nodeServer.port()*/});
+  javaServer.start({port: nodeServer.port()});
 
   nodeServer.on('initialised', function onMessage(message) {
     javaServer.port = message.port;
@@ -33,6 +32,4 @@ Java.prototype.onInitialised = function(callback) {
 Java.prototype.sendRequest = function(request, callback) {
 };
 
-java = new Java();
-
-module.exports = java;
+module.exports = Java;

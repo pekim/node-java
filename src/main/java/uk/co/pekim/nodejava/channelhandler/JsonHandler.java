@@ -24,7 +24,7 @@ public class JsonHandler extends SimpleChannelHandler {
     @Override
     public void writeRequested(final ChannelHandlerContext context, final MessageEvent event) throws Exception {
         final String jsonString = JSON_MAPPER.writeValueAsString(event.getMessage());
-        LOGGER.info("Writing " + jsonString);
+        LOGGER.debug("Writing " + jsonString);
 
         Channels.write(context, event.getFuture(), jsonString);
     }
