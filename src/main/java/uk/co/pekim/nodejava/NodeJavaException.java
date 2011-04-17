@@ -14,16 +14,19 @@ public class NodeJavaException extends RuntimeException {
 
     /**
      * @param message
+     *            the detail message
      */
-    public NodeJavaException(String message) {
+    public NodeJavaException(final String message) {
         super(message);
     }
 
     /**
-     * @param string
+     * @param message
+     *            the detail message
      * @param cause
+     *            the cause
      */
-    public NodeJavaException(String message, Throwable cause) {
+    public NodeJavaException(final String message, final Throwable cause) {
         super(message, cause);
     }
 }

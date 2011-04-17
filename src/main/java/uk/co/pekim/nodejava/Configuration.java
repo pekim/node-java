@@ -6,18 +6,30 @@ import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 
+/**
+ * Server configuration, built from a JSON string.
+ * 
+ * @author Mike D Pilsbury
+ */
 public class Configuration {
     private int nodePort;
 
-    public static Configuration parseJson(String json) {
+    /**
+     * Parse configuration from a JSON string.
+     * 
+     * @param json
+     *            the configuration string to be parsed.
+     * @return configuration
+     */
+    public static Configuration parseJson(final String json) {
         try {
             return new ObjectMapper().readValue(json, Configuration.class);
         } catch (JsonParseException exception) {
-            throw new NodeJavaException("Failed to parse JSON " + json, exception);
+            throw new NodeJavaException("Failed to parse configuration JSON " + json, exception);
         } catch (JsonMappingException exception) {
-            throw new NodeJavaException("Failed to parse JSON " + json, exception);
+            throw new NodeJavaException("Failed to parse configuration JSON " + json, exception);
         } catch (IOException exception) {
-            throw new NodeJavaException("Failed to parse JSON " + json, exception);
+            throw new NodeJavaException("Failed to parse configuration JSON " + json, exception);
         }
     }
 
@@ -25,7 +37,7 @@ public class Configuration {
      * @param nodePort
      *            the nodePort to set
      */
-    public void setNodePort(int nodePort) {
+    public void setNodePort(final int nodePort) {
         this.nodePort = nodePort;
     }
 
