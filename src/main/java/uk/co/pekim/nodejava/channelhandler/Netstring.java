@@ -13,8 +13,15 @@ import java.nio.charset.Charset;
  * 
  */
 public final class Netstring {
-    private static final char LENGTH_DELIMITER = ':';
-    private static final char STRING_DELIMITER = ',';
+    /**
+     * Denotes end of length characters.
+     */
+    public static final char LENGTH_DELIMITER = ':';
+
+    /**
+     * Denotes end of string characters.
+     */
+    public static final char STRING_DELIMITER = ',';
 
     /**
      * Character set for used for encoding and decoding netstrings.

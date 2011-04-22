@@ -24,11 +24,11 @@ public class NetstringDecoder extends FrameDecoder {
     @Override
     protected Object decode(final ChannelHandlerContext context, final Channel channel, final ChannelBuffer buffer)
             throws Exception {
-        LOGGER.info("Readable bytes : " + buffer.readableBytes());
+        LOGGER.debug("Readable bytes : " + buffer.readableBytes());
         buffer.markReaderIndex();
 
         while (buffer.readable()) {
-            if (buffer.readByte() == ':') {
+            if (buffer.readByte() == Netstring.LENGTH_DELIMITER) {
                 break;
             }
         }
@@ -39,35 +39,50 @@ public class NetstringDecoder extends FrameDecoder {
             return null;
         }
 
-        // Extract string length.
-        byte[] lengthBytes = new byte[buffer.readerIndex() - 1];
-        buffer.getBytes(0, lengthBytes);
-        String lengthString = new String(lengthBytes, Netstring.CHARSET);
-        int length;
-        try {
-            length = Integer.parseInt(lengthString.toString());
-        } catch (NumberFormatException exception) {
-            throw new IllegalArgumentException("Cannot parse netstring length from '" + lengthString + "'", exception);
-        }
-        LOGGER.info("Length : " + length);
+        int length = extractStringLength(buffer);
 
         if (buffer.readableBytes() < length + 1) {
             buffer.resetReaderIndex();
             return null;
         }
 
-        // Extract string.
+        String string = extractString(buffer, length);
+        consumeComma(buffer, string);
+
+        return string;
+    }
+
+    private void consumeComma(final ChannelBuffer buffer, final String string) {
+        if (buffer.readByte() != Netstring.STRING_DELIMITER) {
+            throw new NodeJavaException("Expected ',' to terminate netstring \"" + string + "\"");
+        }
+    }
+
+    private String extractString(final ChannelBuffer buffer, final int length) {
         byte[] stringBytes = new byte[length];
         buffer.readBytes(stringBytes);
         String string = new String(stringBytes, Netstring.CHARSET);
-        LOGGER.info("String : " + string);
 
-        // Consume ','.
-        if (buffer.readByte() != ',') {
-            throw new NodeJavaException("Expected ',' to terminate netstring \"" + string + "\"");
-        }
+        LOGGER.debug("String : " + string);
 
         return string;
+    }
+
+    private int extractStringLength(final ChannelBuffer buffer) {
+        byte[] lengthBytes = new byte[buffer.readerIndex() - 1];
+        buffer.getBytes(0, lengthBytes);
+        String lengthString = new String(lengthBytes, Netstring.CHARSET);
+
+        int length;
+        try {
+            length = Integer.parseInt(lengthString.toString());
+        } catch (NumberFormatException exception) {
+            throw new IllegalArgumentException("Cannot parse netstring length from '" + lengthString + "'", exception);
+        }
+
+        LOGGER.debug("Length : " + length);
+
+        return length;
     }
 
     @Override
