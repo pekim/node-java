@@ -3,6 +3,12 @@
  */
 package uk.co.pekim.nodejava;
 
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
+
+import org.simpleframework.transport.connect.Connection;
+import org.simpleframework.transport.connect.SocketConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,9 +40,19 @@ public final class Main {
             String configurationJson = args[0];
             Configuration configuration = Configuration.parseJson(configurationJson);
 
-            Server server = new Server();
+            InetSocketAddress address2;
+            try {
+                Server server = new Server();
+                Connection connection = new SocketConnection(server);
+                SocketAddress address = new InetSocketAddress(0);
 
-            NotifyInitialised initialisedMessage = new NotifyInitialised(server.getPort());
+                address2 = (InetSocketAddress) connection.connect(address);
+                LOGGER.info("Port : " + address2.getPort());
+            } catch (IOException exception) {
+                throw new NodeJavaException("Failed to create server", exception);
+            }
+
+            NotifyInitialised initialisedMessage = new NotifyInitialised(address2.getPort());
             new NodeNotifier(configuration.getNodePort(), initialisedMessage);
         } catch (NodeJavaException exception) {
             LOGGER.error("Fatal error", exception);

@@ -1,112 +1,39 @@
-/**
- * 
- */
 package uk.co.pekim.nodejava;
 
-import java.net.InetSocketAddress;
-import java.util.concurrent.Executors;
+import java.io.IOException;
+import java.io.PrintStream;
 
-import org.jboss.netty.bootstrap.ServerBootstrap;
-import org.jboss.netty.channel.Channel;
-import org.jboss.netty.channel.ChannelException;
-import org.jboss.netty.channel.ChannelFactory;
-import org.jboss.netty.channel.ChannelPipeline;
-import org.jboss.netty.channel.ChannelPipelineFactory;
-import org.jboss.netty.channel.Channels;
-import org.jboss.netty.channel.group.ChannelGroup;
-import org.jboss.netty.channel.group.ChannelGroupFuture;
-import org.jboss.netty.channel.group.DefaultChannelGroup;
-import org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory;
-import org.jboss.netty.logging.InternalLoggerFactory;
-import org.jboss.netty.logging.Slf4JLoggerFactory;
+import org.simpleframework.http.Request;
+import org.simpleframework.http.Response;
+import org.simpleframework.http.core.Container;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import uk.co.pekim.nodejava.channelhandler.JsonHandler;
-import uk.co.pekim.nodejava.channelhandler.NetstringDecoder;
-import uk.co.pekim.nodejava.channelhandler.NetstringEncoder;
 
 /**
  * 
  * 
  * @author Mike D Pilsbury
  */
-public class Server {
+public class Server implements Container {
     private static final Logger LOGGER = LoggerFactory.getLogger(Server.class);
 
-    private static final int MIN_PORT = 1024;
-    private static final int MAX_PORT = 0xFFFF;
+    @Override
+    public void handle(final Request request, final Response response) {
+        try {
+            LOGGER.info(Thread.currentThread().getName());
 
-    private final ChannelGroup allChannels = new DefaultChannelGroup("node-java-server");
-    private final ChannelFactory channelFactory;
+            PrintStream body = response.getPrintStream();
+            long time = System.currentTimeMillis();
 
-    private int port;
+            response.set("Content-Type", "text/plain");
+            response.set("Server", "HelloWorld/1.0 (Simple 4.0)");
+            response.setDate("Date", time);
+            response.setDate("Last-Modified", time);
 
-    /**
-     */
-    public Server() {
-        InternalLoggerFactory.setDefaultFactory(new Slf4JLoggerFactory());
-
-        LOGGER.info("Starting");
-
-        channelFactory = new NioServerSocketChannelFactory(Executors.newCachedThreadPool(),
-                Executors.newCachedThreadPool());
-
-        ServerBootstrap bootstrap = new ServerBootstrap(channelFactory);
-
-        bootstrap.setPipelineFactory(new ChannelPipelineFactory() {
-            public ChannelPipeline getPipeline() {
-                return Channels.pipeline(new NetstringEncoder(), new NetstringDecoder(), new JsonHandler());
-            }
-        });
-
-        bootstrap.setOption("child.tcpNoDelay", true);
-        bootstrap.setOption("child.keepAlive", true);
-
-        bind(bootstrap);
-        LOGGER.info("Listening on port " + port);
-    }
-
-    /**
-     * 
-     */
-    public void shutdown() {
-        LOGGER.info("Shutting down");
-
-        ChannelGroupFuture future = allChannels.close();
-        future.awaitUninterruptibly();
-        channelFactory.releaseExternalResources();
-
-        LOGGER.info("Shutdown");
-    }
-
-    private int bind(final ServerBootstrap bootstrap) {
-        // The only reason we have to try to bind to various ports
-        // is that if we bind to an ephemeral port, Netty doesn't
-        // expose a means of finding out which port is used.
-
-        boolean bound = false;
-        while (!bound) {
-            try {
-                port = (int) ((Math.random() * (MAX_PORT + 1 - MIN_PORT)) + MIN_PORT);
-                InetSocketAddress address = new InetSocketAddress(port);
-
-                Channel channel = bootstrap.bind(address);
-                allChannels.add(channel);
-
-                bound = true;
-            } catch (ChannelException exception) {
-                LOGGER.debug("Port in use : " + port);
-                port++;
-            }
+            body.println("Hello World");
+            body.close();
+        } catch (IOException exception) {
+            throw new NodeJavaException("Failed to process request", exception);
         }
-        return port;
-    }
-
-    /**
-     * @return the port
-     */
-    public int getPort() {
-        return port;
     }
 }
