@@ -3,17 +3,16 @@
  */
 package uk.co.pekim.nodejava;
 
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.net.SocketAddress;
-
-import org.simpleframework.transport.connect.Connection;
-import org.simpleframework.transport.connect.SocketConnection;
+import org.simpleframework.http.core.Container;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.co.pekim.nodejava.nodenotify.NodeNotifier;
 import uk.co.pekim.nodejava.nodenotify.NotifyInitialised;
+import uk.co.pekim.nodejava.server.HttpRequestHandler;
+import uk.co.pekim.nodejava.server.HttpContainer;
+import uk.co.pekim.nodejava.server.JsonRequestHandler;
+import uk.co.pekim.nodejava.server.Server;
 
 /**
  * 
@@ -40,24 +39,23 @@ public final class Main {
             String configurationJson = args[0];
             Configuration configuration = Configuration.parseJson(configurationJson);
 
-            InetSocketAddress address2;
-            try {
-                Server server = new Server();
-                Connection connection = new SocketConnection(server);
-                SocketAddress address = new InetSocketAddress(0);
+            Server server = createServer();
 
-                address2 = (InetSocketAddress) connection.connect(address);
-                LOGGER.info("Port : " + address2.getPort());
-            } catch (IOException exception) {
-                throw new NodeJavaException("Failed to create server", exception);
-            }
-
-            NotifyInitialised initialisedMessage = new NotifyInitialised(address2.getPort());
+            NotifyInitialised initialisedMessage = new NotifyInitialised(server.getPort());
             NodeNotifier nodeNotifier = new NodeNotifier(configuration.getNodePort());
             nodeNotifier.send(initialisedMessage);
         } catch (NodeJavaException exception) {
             LOGGER.error("Fatal error", exception);
             System.exit(1);
         }
+    }
+
+    private static Server createServer() {
+        final JsonRequestHandler jsonRequestHandler = new JsonRequestHandler();
+        final HttpRequestHandler handler = new HttpRequestHandler(jsonRequestHandler);
+        final Container requestProcessor = new HttpContainer(handler);
+        final Server server = new Server(requestProcessor);
+
+        return server;
     }
 }

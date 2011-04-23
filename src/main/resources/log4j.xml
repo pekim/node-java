@@ -9,7 +9,7 @@
     </layout>
   </appender>
 
-  <logger name="uk.co.pekim.nodejava.channelhandler">
+  <logger name="uk.co.pekim.nodejava.server">
     <level value="debug" />
   </logger>
 

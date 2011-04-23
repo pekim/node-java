@@ -50,7 +50,7 @@ public class NodeNotifierTest {
     }
 
     @Test
-    public void test() throws Exception {
+    public void testInitialisedMessage() throws Exception {
         NotifyInitialised initialisedMessage = new NotifyInitialised(123);
         NodeNotifier nodeNotifier = new NodeNotifier(serverPort);
         nodeNotifier.send(initialisedMessage);
