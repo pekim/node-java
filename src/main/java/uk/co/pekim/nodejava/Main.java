@@ -53,7 +53,8 @@ public final class Main {
             }
 
             NotifyInitialised initialisedMessage = new NotifyInitialised(address2.getPort());
-            new NodeNotifier(configuration.getNodePort(), initialisedMessage);
+            NodeNotifier nodeNotifier = new NodeNotifier(configuration.getNodePort());
+            nodeNotifier.send(initialisedMessage);
         } catch (NodeJavaException exception) {
             LOGGER.error("Fatal error", exception);
             System.exit(1);

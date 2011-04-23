@@ -5,15 +5,23 @@ package uk.co.pekim.nodejava.nodenotify;
 
 import static org.junit.Assert.assertTrue;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.io.PrintStream;
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
+import org.simpleframework.http.Request;
+import org.simpleframework.http.Response;
+import org.simpleframework.http.core.Container;
+import org.simpleframework.transport.connect.Connection;
+import org.simpleframework.transport.connect.SocketConnection;
+
+import uk.co.pekim.nodejava.NodeJavaException;
 
 /**
  * Test {@link NodeNotifier}
@@ -21,48 +29,56 @@ import org.junit.Test;
  * @author Mike D Pilsbury
  */
 public class NodeNotifierTest {
-    private final class ThreadExtension extends Thread {
-        private final ServerSocket serverSocket;
-        private final BlockingQueue<String> notify;
+    private BlockingQueue<String> notify;
+    private int serverPort;
+    private Connection connection;
 
-        private ThreadExtension(final ServerSocket serverSocket, final BlockingQueue<String> notify) {
-            this.serverSocket = serverSocket;
-            this.notify = notify;
-        }
+    @Before
+    public void createServer() throws Exception {
+        notify = new LinkedBlockingQueue<String>();
 
-        public void run() {
-            Socket socket;
-            try {
-                socket = serverSocket.accept();
+        Server server = new Server(notify);
+        connection = new SocketConnection(server);
+        SocketAddress address = new InetSocketAddress(0);
+        InetSocketAddress address2 = (InetSocketAddress) connection.connect(address);
+        serverPort = address2.getPort();
+    }
 
-                BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-
-                char[] buffer = new char[200];
-                in.read(buffer);
-                notify.add(new String(buffer));
-
-                in.close();
-                serverSocket.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+    @After
+    public void closeServer() throws Exception {
+        connection.close();
     }
 
     @Test
     public void test() throws Exception {
-        final BlockingQueue<String> notify = new LinkedBlockingQueue<String>();
-        final ServerSocket serverSocket = new ServerSocket(0);
-
-        Thread thread = new ThreadExtension(serverSocket, notify);
-        thread.start();
-
         NotifyInitialised initialisedMessage = new NotifyInitialised(123);
-        new NodeNotifier(serverSocket.getLocalPort(), initialisedMessage);
+        NodeNotifier nodeNotifier = new NodeNotifier(serverPort);
+        nodeNotifier.send(initialisedMessage);
 
         String received = notify.take();
         assertTrue(received.contains("initialised"));
         assertTrue(received.contains("port"));
         assertTrue(received.contains("123"));
+    }
+
+    private class Server implements Container {
+        private final BlockingQueue<String> notify;
+
+        private Server(BlockingQueue<String> notify) {
+            this.notify = notify;
+        }
+
+        @Override
+        public void handle(final Request request, final Response response) {
+            try {
+                notify.add(request.getContent());
+
+                PrintStream body = response.getPrintStream();
+                response.set("Content-Type", "text/plain");
+                body.close();
+            } catch (IOException exception) {
+                throw new NodeJavaException("Failed to process request", exception);
+            }
+        }
     }
 }
