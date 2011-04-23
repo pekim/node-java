@@ -1,10 +1,13 @@
-package uk.co.pekim.nodejava;
+package uk.co.pekim.nodejava.configuration;
 
 import java.io.IOException;
+import java.util.Map;
 
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+
+import uk.co.pekim.nodejava.NodeJavaException;
 
 /**
  * Server configuration, built from a JSON string.
@@ -13,6 +16,7 @@ import org.codehaus.jackson.map.ObjectMapper;
  */
 public class Configuration {
     private int nodePort;
+    private Map<String, String> requestHandlers;
 
     /**
      * Parse configuration from a JSON string.
@@ -46,5 +50,20 @@ public class Configuration {
      */
     public int getNodePort() {
         return nodePort;
+    }
+
+    /**
+     * @param requestHandlers
+     *            the requestHandlers to set
+     */
+    public void setRequestHandlers(final Map<String, String> requestHandlers) {
+        this.requestHandlers = requestHandlers;
+    }
+
+    /**
+     * @return the requestHandlers
+     */
+    public Map<String, String> getRequestHandlers() {
+        return requestHandlers;
     }
 }

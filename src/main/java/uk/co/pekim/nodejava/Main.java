@@ -7,6 +7,7 @@ import org.simpleframework.http.core.Container;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import uk.co.pekim.nodejava.configuration.Configuration;
 import uk.co.pekim.nodejava.nodenotify.NodeNotifier;
 import uk.co.pekim.nodejava.nodenotify.NotifyInitialised;
 import uk.co.pekim.nodejava.server.HttpRequestHandler;
