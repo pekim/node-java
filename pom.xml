@@ -7,16 +7,6 @@
   <name>Node Java</name>
   <description>A Node/Java bridge</description>
 
-  <repositories>
-    <repository>
-      <id>repository.jboss.org</id>
-      <url>http://repository.jboss.org/nexus/content/groups/public/</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
-  </repositories>
-
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
@@ -56,13 +46,13 @@
     <dependency>
       <groupId>org.codehaus.jackson</groupId>
       <artifactId>jackson-core-asl</artifactId>
-      <version>1.7.5</version>
+      <version>1.8.0</version>
       <type>jar</type>
     </dependency>
     <dependency>
       <groupId>org.codehaus.jackson</groupId>
       <artifactId>jackson-mapper-asl</artifactId>
-      <version>1.7.5</version>
+      <version>1.8.0</version>
       <type>jar</type>
     </dependency>
   </dependencies>
