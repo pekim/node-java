@@ -3,11 +3,14 @@
  */
 package uk.co.pekim.nodejava.server;
 
-import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import uk.co.pekim.nodejava.NodeJavaException;
 
@@ -17,6 +20,8 @@ import uk.co.pekim.nodejava.NodeJavaException;
  * @author Mike D Pilsbury
  */
 public class JsonRequestHandler {
+    private static final Logger LOGGER = LoggerFactory.getLogger(JsonRequestHandler.class);
+
     private final ObjectMapper jsonMapper;
 
     /**
@@ -47,10 +52,15 @@ public class JsonRequestHandler {
             final String jsonResponse = jsonMapper.writeValueAsString(response);
 
             return jsonResponse;
-        } catch (IOException exception) {
-            throw new NodeJavaException("Failed to build JSON response", exception);
-        } catch (ClassCastException exception) {
-            throw new NodeJavaException("Failed to build JSON response", exception);
+        } catch (Throwable exception) {
+            LOGGER.error("Failed to process request, handlerClassName:" + handlerClassName + ", jsonRequest:"
+                    + jsonRequest, exception);
+
+            StringWriter stringWriter = new StringWriter();
+            PrintWriter printWriter = new PrintWriter(stringWriter);
+            exception.printStackTrace(printWriter);
+
+            return "{\"error\": \"" + exception.getMessage() + "\",\"message\": \"" + stringWriter.toString() + "\"}";
         }
     }
 

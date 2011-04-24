@@ -3,6 +3,7 @@
  */
 package uk.co.pekim.nodejava.server;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.net.URI;
@@ -45,14 +46,26 @@ public class ServerTest {
     }
 
     @Test
-    public void simple() throws Exception {
+    public void success() throws Exception {
         final HttpPost post = new HttpPost(uri);
+        post.setHeader("X-NodeJava-Handle", JsonRequestHandlerTest.Handler.class.getName());
+        post.setEntity(new StringEntity("{\"value\":1}"));
+
+        final HttpResponse response = httpClient.execute(post);
+        String responseText = EntityUtils.toString(response.getEntity());
+
+        assertEquals("{\"value\":2}", responseText);
+    }
+
+    @Test
+    public void failure() throws Exception {
+        final HttpPost post = new HttpPost(uri);
+        post.setHeader("X-NodeJava-Handle", "bad-class-name");
         post.setEntity(new StringEntity(""));
 
         final HttpResponse response = httpClient.execute(post);
         String responseText = EntityUtils.toString(response.getEntity());
 
-        assertTrue(responseText.startsWith("{"));
-        assertTrue(responseText.endsWith("}"));
+        assertTrue(responseText.contains("\"error\":"));
     }
 }
