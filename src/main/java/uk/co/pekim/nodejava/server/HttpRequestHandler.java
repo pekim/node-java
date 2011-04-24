@@ -62,7 +62,7 @@ public class HttpRequestHandler {
 
             PrintStream body = response.getPrintStream();
 
-            response.set("Content-Type", "text/plain");
+            response.set("Content-Type", "application/json");
 
             body.print(jsonResponse);
             body.close();
