@@ -11,11 +11,11 @@ Server = function () {
   self.server = http.createServer(function (request, response) {
     var data = "";
 
-    request.addListener('data', function(chunk) {
+    request.on('data', function(chunk) {
       data += chunk;
     });
 
-    request.addListener('end', function() {
+    request.on('end', function() {
       var message = JSON.parse(data);
       
       self.emit(message.type, message);

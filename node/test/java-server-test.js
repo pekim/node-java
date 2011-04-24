@@ -1,19 +1,20 @@
 var Server = require('../lib/java-server'),
-    net = require('net');
+    http = require('http');
 
 exports.start = function(test) {
   var nodeServer,
       server;
 
-  nodeServer = net.createServer(function connected(socket) {
-    socket.on('data', function data(data) {
-      test.notStrictEqual(data.toString('utf8').indexOf('initialised'), -1);
+  nodeServer = http.createServer(function (request, response) {
+    request.addListener('data', function(data) {
+      var message = JSON.parse(data);
+      test.strictEqual(message.type, 'initialised');
       
       server.kill();
       test.done();
     });
   });
-  
+
   nodeServer.listen();
   
   server = new Server();

@@ -31,11 +31,28 @@ Server.prototype.kill = function () {
 };
 
 Server.prototype.sendRequest = function(request, callback) {
-  var socket = net.createConnection(this.port);
+  var options = {
+      host: 'localhost',
+      port: server.port(),
+      path: '/',
+      method: 'POST'
+    };
 
-  socket.on('connect', function connect() {
-    socket.write(netstring.nsWrite(JSON.stringify(request)));
+  var request = http.request(options, function(response) {
+    var data = "";
+
+    response.on('data', function(chunk) {
+      data += chunk;
+    });
+
+    response.on('end', function() {
+      callback(JSON.parse(data));
+    });
   });
+
+  // write data to request body
+  request.write(JSON.stringify(request));
+  request.end();
 };
 
 function logOutput(javaProcess) {
