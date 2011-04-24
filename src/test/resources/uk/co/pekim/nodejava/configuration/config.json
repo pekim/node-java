@@ -1,6 +1,3 @@
 {
-  "nodePort": 1234,
-  "requestHandlers": {
-    "req1": "ReqClass1"
-  }
+  "nodePort": 1234
 }

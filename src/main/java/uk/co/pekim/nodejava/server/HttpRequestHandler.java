@@ -19,6 +19,11 @@ import uk.co.pekim.nodejava.NodeJavaException;
  * @author Mike D Pilsbury
  */
 public class HttpRequestHandler {
+    /**
+     * 
+     */
+    private static final String HEADER_HANDLERCLASS = "X-NodeJava-Handle";
+
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpRequestHandler.class);
 
     private final JsonRequestHandler jsonRequestHandler;
@@ -44,10 +49,15 @@ public class HttpRequestHandler {
      */
     void handle(final Request request, final Response response) {
         try {
+            final String handlerClassName = request.getValue(HEADER_HANDLERCLASS);
+            if (handlerClassName == null) {
+                throw new NodeJavaException("Missing header " + HEADER_HANDLERCLASS);
+            }
+
             final String jsonRequest = request.getContent();
             LOGGER.debug("Request : " + jsonRequest);
 
-            final String jsonResponse = jsonRequestHandler.handle(jsonRequest);
+            final String jsonResponse = jsonRequestHandler.handle(handlerClassName, jsonRequest);
             LOGGER.debug("Response : " + jsonResponse);
 
             PrintStream body = response.getPrintStream();
