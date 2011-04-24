@@ -19,12 +19,13 @@ import uk.co.pekim.nodejava.NodeJavaException;
  * @author Mike D Pilsbury
  */
 public class HttpRequestHandler {
-    /**
-     * 
-     */
-    private static final String HEADER_HANDLERCLASS = "X-NodeJava-Handle";
-
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpRequestHandler.class);
+
+    /**
+     * The name of the HTTP header used to convey the class name of the request
+     * handler class.
+     */
+    public static final String HEADER_HANDLERCLASS = "X-NodeJava-Handler";
 
     private final JsonRequestHandler jsonRequestHandler;
 

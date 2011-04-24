@@ -50,7 +50,7 @@ public class ServerTest {
     @Test
     public void success() throws Exception {
         final HttpPost post = new HttpPost(uri);
-        post.setHeader("X-NodeJava-Handle", EchoHandler.class.getName());
+        post.setHeader(HttpRequestHandler.HEADER_HANDLERCLASS, EchoHandler.class.getName());
         post.setEntity(new StringEntity("{\"text\":\"some-text\", \"number\":6}"));
 
         final HttpResponse response = httpClient.execute(post);
@@ -62,7 +62,7 @@ public class ServerTest {
     @Test
     public void failure() throws Exception {
         final HttpPost post = new HttpPost(uri);
-        post.setHeader("X-NodeJava-Handle", "bad-class-name");
+        post.setHeader(HttpRequestHandler.HEADER_HANDLERCLASS, "bad-class-name");
         post.setEntity(new StringEntity(""));
 
         final HttpResponse response = httpClient.execute(post);
