@@ -1,6 +1,5 @@
 var Server = require('../lib/node-server'),
-    net = require('net'),
-    netstring = require('netstring');
+    http = require('http');
 
 exports.port = function(test) {
   var server = new Server();
@@ -11,8 +10,7 @@ exports.port = function(test) {
 };
 
 exports.message = function(test) {
-  var server = new Server(),
-      socket;
+  var server = new Server();
 
   test.expect(1);
   
@@ -23,9 +21,18 @@ exports.message = function(test) {
   });
 
   process.nextTick(function() {
-    socket = net.createConnection(server.port());
-    socket.on('connect', function connect() {
-      socket.write(netstring.nsWrite(JSON.stringify({type: 'initialised'})));
+    var options = {
+        host: 'localhost',
+        port: server.port(),
+        path: '/',
+        method: 'POST'
+      };
+
+    var request = http.request(options, function(res) {
     });
+
+    // write data to request body
+    request.write(JSON.stringify({type: 'initialised'}));
+    request.end();
   });
 };

@@ -1,5 +1,4 @@
-var net = require('net'),
-    NetstringBuffer = require('./netstring-buffer'),
+var http = require('http'),
     util = require('util'),
     events = require('events'),
     Server;
@@ -8,23 +7,24 @@ Server = function () {
   var self = this;
   
   events.EventEmitter.call(self);
-  
-  self.server = net.createServer(function connected(socket) {
-    var buffer = new NetstringBuffer();
 
-    buffer.on('payload', function payload(payload) {
-      var message = JSON.parse(payload);
+  self.server = http.createServer(function (request, response) {
+    var data = "";
 
-      if (message.type !== 'alive') {
-        self.emit(message.type, message);
-      }
+    request.addListener('data', function(chunk) {
+      data += chunk;
     });
 
-    socket.on('data', function data(data) {
-      buffer.put(data);
+    request.addListener('end', function() {
+      var message = JSON.parse(data);
+      
+      self.emit(message.type, message);
+      
+      response.writeHead(200, {'Content-Type': 'application/json'});
+      response.end(JSON.stringify({}));
     });
   });
-  
+    
   self.server.listen();
   
   self.server.on('close', function() {
