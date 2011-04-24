@@ -4,11 +4,10 @@
 package uk.co.pekim.nodejava.server;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.Test;
-
-import uk.co.pekim.nodejava.NodeJavaException;
 
 /**
  * Test {@link JsonRequestHandler}.
@@ -23,14 +22,20 @@ public class JsonRequestHandlerTest {
         jsonRequestHandler = new JsonRequestHandler();
     }
 
-    @Test(expected = NodeJavaException.class)
+    @Test
     public void testHandlerNotFound() {
-        jsonRequestHandler.handle("bad", "request");
+        String response = jsonRequestHandler.handle("bad", "request");
+
+        assertTrue(response.contains("error"));
+        assertTrue(response.contains("handler"));
     }
 
-    @Test(expected = NodeJavaException.class)
+    @Test
     public void testHandlerNotImplementNodeJavaHandler() {
-        jsonRequestHandler.handle("java.lang.Object", "request");
+        String response = jsonRequestHandler.handle("java.lang.Object", "request");
+
+        assertTrue(response.contains("error"));
+        assertTrue(response.contains("ClassCastException"));
     }
 
     @Test
