@@ -1,7 +1,7 @@
 /**
  * 
  */
-package uk.co.pekim.nodejava.nodehandler;
+package uk.co.pekim.nodejava.server;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
