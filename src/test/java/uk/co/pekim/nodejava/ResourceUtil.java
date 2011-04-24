@@ -8,12 +8,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import org.junit.Ignore;
+
 /**
  * Utilities used in tests.
  * 
  * @author Mike D Pilsbury
  */
-public class TestUtil {
+public class ResourceUtil {
     /**
      * Read a resource.
      * 
@@ -23,8 +25,9 @@ public class TestUtil {
      * @throws IOException
      *             if something went wrong.
      */
-    public static String getResourceAsString(String resourceName) throws IOException {
-        InputStream input = TestUtil.class.getResourceAsStream(resourceName);
+    @Ignore
+    public static String getAsString(String resourceName) throws IOException {
+        InputStream input = ResourceUtil.class.getResourceAsStream(resourceName);
         BufferedReader reader = new BufferedReader(new InputStreamReader(input));
 
         StringBuilder string = new StringBuilder();
