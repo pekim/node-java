@@ -13,6 +13,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.co.pekim.nodejava.NodeJavaException;
+import uk.co.pekim.nodejava.nodehandler.NodeJavaHandler;
+import uk.co.pekim.nodejava.nodehandler.NodeJavaRequest;
+import uk.co.pekim.nodejava.nodehandler.NodeJavaResponse;
 
 /**
  * 

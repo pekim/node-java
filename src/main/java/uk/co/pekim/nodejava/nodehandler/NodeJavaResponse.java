@@ -1,7 +1,7 @@
 /**
  * 
  */
-package uk.co.pekim.nodejava.server;
+package uk.co.pekim.nodejava.nodehandler;
 
 /**
  * A response (that will be marshalled to JSON) to a request from a Node

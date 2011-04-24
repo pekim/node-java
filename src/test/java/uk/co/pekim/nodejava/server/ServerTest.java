@@ -19,6 +19,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.simpleframework.http.core.Container;
 
+import uk.co.pekim.nodejava.nodehandler.echo.EchoHandler;
+
 /**
  * Test {@link Server}
  * 
@@ -48,13 +50,13 @@ public class ServerTest {
     @Test
     public void success() throws Exception {
         final HttpPost post = new HttpPost(uri);
-        post.setHeader("X-NodeJava-Handle", JsonRequestHandlerTest.Handler.class.getName());
-        post.setEntity(new StringEntity("{\"value\":1}"));
+        post.setHeader("X-NodeJava-Handle", EchoHandler.class.getName());
+        post.setEntity(new StringEntity("{\"text\":\"some-text\", \"number\":6}"));
 
         final HttpResponse response = httpClient.execute(post);
         String responseText = EntityUtils.toString(response.getEntity());
 
-        assertEquals("{\"value\":2}", responseText);
+        assertEquals("{\"text\":\"some-text\",\"incrementedNumber\":7}", responseText);
     }
 
     @Test
