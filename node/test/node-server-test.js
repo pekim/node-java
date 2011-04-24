@@ -31,7 +31,6 @@ exports.message = function(test) {
     var request = http.request(options, function(res) {
     });
 
-    // write data to request body
     request.write(JSON.stringify({type: 'initialised'}));
     request.end();
   });

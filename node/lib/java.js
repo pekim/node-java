@@ -32,8 +32,12 @@ Java.prototype.onInitialised = function(callback) {
     }
 };
 
-Java.prototype.sendRequest = function(request, callback) {
-  this.javaServer.sendRequest(request, callback);
+Java.prototype.sendRequest = function(handlerClassname, request, callback) {
+  this.javaServer.sendRequest(handlerClassname, request, callback);
+};
+
+Java.prototype.shutdown = function() {
+  this.javaServer.kill();
 };
 
 module.exports = Java;

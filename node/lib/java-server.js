@@ -1,7 +1,6 @@
 var spawn = require('child_process').spawn,
     util = require('util'),
-    net = require('net'),
-    netstring = require('netstring'),
+    http = require('http'),
     events = require('events'),
 
     jar = __dirname + '/../../target/node-java-0.0.1-SNAPSHOT-jar-with-dependencies.jar',
@@ -30,15 +29,18 @@ Server.prototype.kill = function () {
   this.javaProcess.kill();
 };
 
-Server.prototype.sendRequest = function(request, callback) {
+Server.prototype.sendRequest = function(handlerClassname, request, callback) {
   var options = {
       host: 'localhost',
-      port: server.port(),
+      port: this.port,
       path: '/',
-      method: 'POST'
+      method: 'POST',
+      headers: {
+        'X-NodeJava-Handler': handlerClassname
+      }
     };
 
-  var request = http.request(options, function(response) {
+  var httpRequest = http.request(options, function(response) {
     var data = "";
 
     response.on('data', function(chunk) {
@@ -50,9 +52,8 @@ Server.prototype.sendRequest = function(request, callback) {
     });
   });
 
-  // write data to request body
-  request.write(JSON.stringify(request));
-  request.end();
+  httpRequest.write(JSON.stringify(request));
+  httpRequest.end();
 };
 
 function logOutput(javaProcess) {
