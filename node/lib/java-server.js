@@ -3,6 +3,7 @@ var spawn = require('child_process').spawn,
     http = require('http'),
     events = require('events'),
 
+    mainClass = 'uk.co.pekim.nodejava.Main',
     jar = __dirname + '/../../target/node-java-0.0.1-SNAPSHOT-jar-with-dependencies.jar',
     Server;
 
@@ -14,8 +15,17 @@ Server = function () {
 
 util.inherits(Server, events.EventEmitter);
 
-Server.prototype.start = function (nodeConfiguration) {
-  this.javaProcess = spawn('java', ['-jar', jar, JSON.stringify(nodeConfiguration)]);
+Server.prototype.start = function (nodeConfiguration, options) {
+  var classpath = jar;
+
+  options = options || {};
+  options.classpath = options.classpath || '';
+  
+  if (options.classpath) {
+    classpath = options.classpath + ':' + jar;
+  }
+
+  this.javaProcess = spawn('java', ['-classpath', classpath, mainClass, JSON.stringify(nodeConfiguration)]);
   
   logOutput(this.javaProcess);
   logEvents(this.javaProcess);
