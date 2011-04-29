@@ -4,7 +4,7 @@ var util = require('util'),
     JavaServer = require('./java-server'),
     Java;
 
-Java = function () {
+Java = function (options) {
   var self = this;
   
   self.nodeServer = new NodeServer(),
@@ -12,7 +12,7 @@ Java = function () {
 
   events.EventEmitter.call(self);
   
-  self.javaServer.start({nodePort: self.nodeServer.port()});
+  self.javaServer.start({nodePort: self.nodeServer.port()}, options);
 
   self.nodeServer.on('initialised', function onMessage(message) {
     self.javaServer.port(message.port);

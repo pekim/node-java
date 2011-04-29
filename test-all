@@ -1,3 +1,3 @@
 #!/bin/bash
 
-mvn assembly:single && nodeunit node/test/
+mvn clean package assembly:single && nodeunit node/test/

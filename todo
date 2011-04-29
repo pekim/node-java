@@ -1,0 +1,5 @@
+implement shutdown request
+
+kill request?
+
+node termination hook to kill java processes?
