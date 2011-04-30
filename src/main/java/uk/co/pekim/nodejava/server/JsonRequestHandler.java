@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.co.pekim.nodejava.NodeJavaException;
+import uk.co.pekim.nodejava.nodehandler.ErrorResponse;
 import uk.co.pekim.nodejava.nodehandler.NodeJavaHandler;
 import uk.co.pekim.nodejava.nodehandler.NodeJavaRequest;
 import uk.co.pekim.nodejava.nodehandler.NodeJavaResponse;
@@ -59,11 +60,23 @@ public class JsonRequestHandler {
             LOGGER.error("Failed to process request, handlerClassName:" + handlerClassName + ", jsonRequest:"
                     + jsonRequest, exception);
 
+            return generateErrorResponse(exception);
+        }
+    }
+
+    private String generateErrorResponse(final Throwable exception) {
+        try {
             StringWriter stringWriter = new StringWriter();
             PrintWriter printWriter = new PrintWriter(stringWriter);
             exception.printStackTrace(printWriter);
 
-            return "{\"error\": \"" + exception.getMessage() + "\",\"message\": \"" + stringWriter.toString() + "\"}";
+            ErrorResponse errorResponse = new ErrorResponse(exception.getMessage(), stringWriter.toString());
+
+            return jsonMapper.writeValueAsString(errorResponse);
+        } catch (Exception exception2) {
+            LOGGER.error("Failed to build ErrorResponse", exception2);
+
+            return "\"error\": \"Failed to build ErrorResponse\", \"message\": \"See log for details\"";
         }
     }
 

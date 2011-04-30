@@ -4,13 +4,15 @@
 package uk.co.pekim.nodejava.server;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
 
+import java.util.Map;
+
+import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 
 import uk.co.pekim.nodejava.nodehandler.echo.EchoHandler;
-import uk.co.pekim.nodejava.server.JsonRequestHandler;
 
 /**
  * Test {@link JsonRequestHandler}.
@@ -19,26 +21,34 @@ import uk.co.pekim.nodejava.server.JsonRequestHandler;
  */
 public class JsonRequestHandlerTest {
     private JsonRequestHandler jsonRequestHandler;
+    private ObjectMapper objectMapper;
 
     @Before
     public void setup() {
         jsonRequestHandler = new JsonRequestHandler();
+        objectMapper = new ObjectMapper();
     }
 
     @Test
-    public void handlerNotFound() {
-        String response = jsonRequestHandler.handle("bad", "request");
+    public void handlerNotFound() throws Exception {
+        String responseString = jsonRequestHandler.handle("bad-class-name", "request");
 
-        assertTrue(response.contains("error"));
-        assertTrue(response.contains("handler"));
+        @SuppressWarnings("rawtypes")
+        Map response = objectMapper.readValue(responseString, Map.class);
+
+        assertNotNull(response.containsKey("error"));
+        assertNotNull(response.containsKey("message"));
     }
 
     @Test
-    public void handlerNotImplementNodeJavaHandler() {
-        String response = jsonRequestHandler.handle("java.lang.Object", "request");
+    public void handlerNotImplementNodeJavaHandler() throws Exception {
+        String responseString = jsonRequestHandler.handle("java.lang.Object", "request");
 
-        assertTrue(response.contains("error"));
-        assertTrue(response.contains("ClassCastException"));
+        @SuppressWarnings("rawtypes")
+        Map response = objectMapper.readValue(responseString, Map.class);
+
+        assertNotNull(response.containsKey("error"));
+        assertNotNull(response.containsKey("message"));
     }
 
     @Test
