@@ -12,14 +12,33 @@ exports.initialised = function(test) {
   });
 };
 
+exports.badRequest = function(test) {
+  test.expect(1);
+
+  var java = new Java();
+  java.onInitialised(function initialiseEvent() {
+    java.sendRequest('BadClassName',
+        {},
+        function(err, response) {
+          test.ok(err);
+          
+          java.shutdown();
+          test.done();
+        }
+    );
+  });
+};
+
 exports.echo = function(test) {
-  test.expect(2);
+  test.expect(3);
 
   var java = new Java();
   java.onInitialised(function initialiseEvent() {
     java.sendRequest('uk.co.pekim.nodejava.nodehandler.echo.EchoHandler',
         {text: 'something', number: 1},
-        function(response) {
+        function(err, response) {
+          test.ok(!err);
+          
           test.strictEqual(response.text, 'something');
           test.strictEqual(response.incrementedNumber, 2);
 

@@ -58,7 +58,13 @@ Server.prototype.sendRequest = function(handlerClassname, request, callback) {
     });
 
     response.on('end', function() {
-      callback(JSON.parse(data));
+      var javaResponse = JSON.parse(data);
+
+      if (javaResponse.error) {
+        callback(true, javaResponse);
+      } else {
+        callback(undefined, javaResponse);
+      }
     });
   });
 
