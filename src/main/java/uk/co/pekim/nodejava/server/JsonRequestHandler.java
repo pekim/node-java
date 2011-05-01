@@ -47,8 +47,8 @@ public class JsonRequestHandler {
      */
     public String handle(final String handlerClassName, final String jsonRequest) {
         try {
-            NodeJavaHandler handler = getHandler(handlerClassName);
-            Class<? extends NodeJavaRequest> requestClass = handler.getRequestClass();
+            NodeJavaHandler<NodeJavaRequest, NodeJavaResponse> handler = getHandler(handlerClassName);
+            Class<NodeJavaRequest> requestClass = handler.getRequestClass();
 
             NodeJavaRequest request = jsonMapper.readValue(jsonRequest, requestClass);
             NodeJavaResponse response = handler.handle(request);
@@ -80,10 +80,10 @@ public class JsonRequestHandler {
         }
     }
 
-    private NodeJavaHandler getHandler(final String handlerClassName) {
+    private NodeJavaHandler<NodeJavaRequest, NodeJavaResponse> getHandler(final String handlerClassName) {
         try {
-            Class<? extends NodeJavaHandler> handlerClass = Class.forName(handlerClassName).asSubclass(
-                    NodeJavaHandler.class);
+            Class<NodeJavaHandler<NodeJavaRequest, NodeJavaResponse>> handlerClass = (Class<NodeJavaHandler<NodeJavaRequest, NodeJavaResponse>>) Class
+                    .forName(handlerClassName);
 
             handlerClass.getConstructors();
 
