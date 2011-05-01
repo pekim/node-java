@@ -10,16 +10,21 @@ package uk.co.pekim.nodejava.nodehandler;
  * Implementing classes must have a no-args constructor.
  * </p>
  * 
+ * @param <REQUEST>
+ *            the request class.
+ * @param <RESPONSE>
+ *            the reponse class.
+ * 
  * @author Mike D Pilsbury
  */
-public interface NodeJavaHandler {
+public interface NodeJavaHandler<REQUEST extends NodeJavaRequest, RESPONSE extends NodeJavaResponse> {
     /**
      * The class that the JSON request string should be marshalled in to an
      * instance of.
      * 
      * @return the reqyuest class.
      */
-    Class<? extends NodeJavaRequest> getRequestClass();
+    Class<REQUEST> getRequestClass();
 
     /**
      * Handle a request from a Node instance.
@@ -28,5 +33,5 @@ public interface NodeJavaHandler {
      *            the request from Node.
      * @return the response to Node.
      */
-    NodeJavaResponse handle(NodeJavaRequest request);
+    RESPONSE handle(REQUEST request);
 }

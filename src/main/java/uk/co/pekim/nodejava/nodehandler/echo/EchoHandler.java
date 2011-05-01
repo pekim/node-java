@@ -4,8 +4,6 @@
 package uk.co.pekim.nodejava.nodehandler.echo;
 
 import uk.co.pekim.nodejava.nodehandler.NodeJavaHandler;
-import uk.co.pekim.nodejava.nodehandler.NodeJavaRequest;
-import uk.co.pekim.nodejava.nodehandler.NodeJavaResponse;
 
 /**
  * Test handler, that echoes its request.
@@ -16,15 +14,14 @@ import uk.co.pekim.nodejava.nodehandler.NodeJavaResponse;
  * 
  * @author Mike D Pilsbury
  */
-public class EchoHandler implements NodeJavaHandler {
+public class EchoHandler implements NodeJavaHandler<EchoRequest, EchoResponse> {
     @Override
-    public Class<? extends NodeJavaRequest> getRequestClass() {
+    public Class<EchoRequest> getRequestClass() {
         return EchoRequest.class;
     }
 
     @Override
-    public NodeJavaResponse handle(final NodeJavaRequest nodeJavaRequest) {
-        EchoRequest request = (EchoRequest) nodeJavaRequest;
+    public EchoResponse handle(final EchoRequest request) {
         EchoResponse response = new EchoResponse();
 
         response.setText(request.getText());
