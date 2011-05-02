@@ -56,7 +56,7 @@ public class HttpRequestHandler {
             }
 
             final String jsonRequest = request.getContent();
-            LOGGER.debug("Request : " + jsonRequest);
+            LOGGER.debug("Handler : " + handlerClassName + ", " + "Request : " + jsonRequest);
 
             final String jsonResponse = jsonRequestHandler.handle(handlerClassName, jsonRequest);
             LOGGER.debug("Response : " + jsonResponse);
